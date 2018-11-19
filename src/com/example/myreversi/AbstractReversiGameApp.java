@@ -5,14 +5,16 @@ import com.example.myreversi.BoardCell.STONE_COLOR;
 public abstract class AbstractReversiGameApp {
 
 	// フィールド定義
-	protected AbstractReversiLogic	reversiLogic = null;	// ゲームロジック
-	protected AbstractReversiView 	reversiView = null;		// ビュー
+	protected AbstractReversiLogic	reversiLogic = null;		// ゲームロジック
+	protected ReversiViewLogic		reversiViewLogic = null;	// ビューのコアロジック
+	private   IReversiView 			reversiView = null;			// ビューのインタフェース
 	
 	// コンストラクタ
 	public AbstractReversiGameApp(AbstractReversiLogic reversiLogic,
-			AbstractReversiView reversiView) {
+			IReversiView reversiView) {
 		this.reversiLogic = reversiLogic;
 		this.reversiView = reversiView;
+		this.reversiViewLogic = new ReversiViewLogic(reversiView);
 	}
 
 	protected abstract void gameStart();
@@ -23,7 +25,7 @@ public abstract class AbstractReversiGameApp {
 		reversiLogic.doInit();
 		
 		// ビューの初期化と初期盤面表示
-		reversiView.putAll(reversiLogic.getBoardCondition());
+		reversiViewLogic.putAll(reversiLogic.getBoardCondition());
 		
 		// ビューに初期のゲーム状態を表示
 		reversiView.showCondition(reversiLogic.getBoardCondition());
@@ -48,9 +50,9 @@ public abstract class AbstractReversiGameApp {
 				// 石を置いた後の画面表示
 				// まずは石を置く
 				STONE_COLOR stoneColor = reversiLogic.getPrevStoneColor();
-				reversiView.putStone(boardCell, stoneColor);
+				reversiViewLogic.putStone(boardCell, stoneColor);
 				// ひっくり返す
-				reversiView.reverseAll(reversiLogic.getPrevReverseList(), stoneColor);
+				reversiViewLogic.reverseAll(reversiLogic.getPrevReverseList(), stoneColor);
 				// ゲーム状況を表示
 				reversiView.showCondition(reversiLogic.getBoardCondition());
 			}

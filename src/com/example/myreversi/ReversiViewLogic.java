@@ -6,17 +6,20 @@ import com.example.myreversi.BoardCell.STONE_COLOR;
 
 // ゲーム盤ビューの抽象クラス
 // 「ボードの初期化」「石を置く」「ひっくり返す」を抽象メソッドとして持つ
-public abstract class AbstractReversiView {
+public class ReversiViewLogic {
 
-	// 「ボードの初期化」は抽象メソッド(描画方法により初期化内容が異なるため)
-	abstract protected void doInit();
+	// フィールド
+	IReversiView reversiView = null;
 
-	// 「石を置く」は抽象メソッド(単に描画するだけのため)
-	abstract protected void putStone(byte x, byte y, STONE_COLOR color);
+	// コンストラクタ
+	public ReversiViewLogic(IReversiView reversiView) {
+		this.reversiView = reversiView;
+	}
+
 	// マス目指定で石を置く
 	public void putStone(BoardCell boardCell, STONE_COLOR color) {
 		// 座標系をx,yに変換して抽象メソッドを呼び出す
-		putStone(boardCell.getX(), boardCell.getY(), color);
+		reversiView.putStone(boardCell.getX(), boardCell.getY(), color);
 	}
 	
 	// 「ひっくり返す」は実メソッド(「石を置く」を繰り返すため)
@@ -30,17 +33,17 @@ public abstract class AbstractReversiView {
 		
 		// リスト内の対象すべてを描画
 		for (BoardCell boardCell : boardCellList) {
-			this.reverse(boardCell, color);
+			reversiView.reverse(boardCell, color);
 		}
 		
 		// 後処理
-		doPost();
+		reversiView.doPost();
 	}
 	
 	// 「全配置」は実メソッド(「石を置く」を繰り返すため)
 	public void putAll(BoardCondition boardCondition) {
 		// 盤面を初期化
-		doInit();
+		reversiView.doInit();
 
 		// 石を配置
 		for (BoardCell boardCell : boardCondition.getBoardState()) {
@@ -52,18 +55,6 @@ public abstract class AbstractReversiView {
 		}
 		
 		// 後処理
-		doPost();
+		reversiView.doPost();
 	}
-
-	// ひっくり返す処理は抽象メソッド(描画方法により内容が異なる)
-	abstract protected void reverse(BoardCell boardCell, STONE_COLOR color);
-	
-	// 後処理は抽象メソッド(描画方法により必要な後処理が異なる)
-	abstract protected void doPost();
-
-	// 入力待ち状態へ移行(描画方法により待ち方が異なる)
-	abstract public BoardCell waitForInput();
-	
-	// ゲーム状況の表示(描画方法により表示処理が異なる)
-	abstract public void showCondition(BoardCondition boardCondition);
 }
