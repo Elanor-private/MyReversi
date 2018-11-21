@@ -262,6 +262,15 @@ public class BoardCondition {
 		// マップ内のマス目を置き換え
 		this.boardState.set(boardCell.getAddress(), boardCell);
 
+		// 空きマスの更新
+		if ( boardCell.getColor() == STONE_COLOR.NONE ) {
+			// 空きマスの追加
+			this.blankField.putIfAbsent(boardCell.getAddress(), boardCell);
+		} else {
+			// 空きマスから削除
+			this.blankField.remove(boardCell.getAddress());
+		}
+		
 		// 黒、白の個数を更新
 		this.blackCount = this.countStone(STONE_COLOR.BLACK);
 		this.whiteCount = this.countStone(STONE_COLOR.WHITE);
