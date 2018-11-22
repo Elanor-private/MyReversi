@@ -52,13 +52,29 @@ public class BoardCell {
 		}
 	};
 
+	// 盤面の操作内容
+	public enum OPERATION {
+		NONE,					// 何もしない(石の単純配置など)
+		PUT,					// 石を置いてひっくり返す
+		UNDO,					// undo
+		REDO					// redo
+	};
 	
 	private	byte			x;			// 横座標
 	private byte			y;			// 縦座標 
 	private byte			address;	// 0-63の連番
 	private STONE_COLOR		color;		// 置かれている石		 	
-
+	private OPERATION		operation;	// 盤面の操作内容
 	
+	
+	public OPERATION getOperation() {
+		return operation;
+	}
+
+	public void setOperation(OPERATION operation) {
+		this.operation = operation;
+	}
+
 	// コンストラクタ
 	// 盤面の初期化時のみ呼び出す前提
 	public BoardCell(byte address) {
@@ -71,6 +87,9 @@ public class BoardCell {
 		
 		// 石の状態を初期化
 		this.color = STONE_COLOR.NONE;
+		
+		// 操作内容を初期化
+		this.operation = OPERATION.PUT;
 	}
 
 	// コンストラクタ
@@ -84,6 +103,9 @@ public class BoardCell {
 		
 		// 石の状態を初期化
 		this.color = STONE_COLOR.NONE;
+		
+		// 操作内容を初期化
+		this.operation = OPERATION.PUT;
 	}
 
 	// x座標を返す
@@ -165,6 +187,10 @@ public class BoardCell {
 		
 		// 石をひっくり返す
 		this.color = color;
+		
+		// 操作内容を設定
+		this.operation = OPERATION.PUT;
+		
 		return true;
 	}
 	

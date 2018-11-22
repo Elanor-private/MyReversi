@@ -45,16 +45,52 @@ public abstract class AbstractReversiGameApp {
 		}
 
 		if (boardCell != null) {
-			// 「石を置く」ロジックを実行
-			if (reversiLogic.doPut(boardCell)) {
-				// 石を置いた後の画面表示
-				// まずは石を置く
-				STONE_COLOR stoneColor = reversiLogic.getPrevStoneColor();
-				reversiViewLogic.putStone(boardCell, stoneColor);
-				// ひっくり返す
-				reversiViewLogic.reverseAll(reversiLogic.getPrevReverseList(), stoneColor);
-				// ゲーム状況を表示
-				reversiView.showCondition(reversiLogic.getBoardCondition());
+			// 操作内容で分岐
+			switch( boardCell.getOperation() ) {
+			case NONE:
+				// 何もしない
+				break;
+				
+			case PUT: 		// 石を置く
+				// 「石を置く」ロジックを実行
+				if (reversiLogic.doPut(boardCell)) {
+					// 石を置いた後の画面表示
+					// まずは石を置く
+					STONE_COLOR stoneColor = reversiLogic.getPrevStoneColor();
+					reversiViewLogic.putStone(boardCell, stoneColor);
+					// ひっくり返す
+					reversiViewLogic.reverseAll(reversiLogic.getPrevReverseList(), stoneColor);
+					// ゲーム状況を表示
+					reversiView.showCondition(reversiLogic.getBoardCondition());
+				}
+				
+				break;
+				
+			case UNDO:		// undo
+				if (reversiLogic.canUndo()) {
+					// undoロジックを実行
+					reversiLogic.doUndo();
+					
+					// 石を全配置
+					reversiViewLogic.putAll(reversiLogic.getBoardCondition());
+
+					// ゲーム状況を表示
+					reversiView.showCondition(reversiLogic.getBoardCondition());
+				}
+				break;
+				
+			case REDO:		// redo
+				if (reversiLogic.canRedo()) {
+					// redoロジックを実行
+					reversiLogic.doRedo();
+					
+					// 石を全配置
+					reversiViewLogic.putAll(reversiLogic.getBoardCondition());
+					
+					// ゲーム状況を表示
+					reversiView.showCondition(reversiLogic.getBoardCondition());
+				}
+				break;
 			}
 		}
 	}
